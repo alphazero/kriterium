@@ -133,19 +133,19 @@ func New(errcode string) TypedError {
 //    }
 //
 //    // At the call site, we can check for error type using
-//    // TypedError.Instance, as shown below.
+//    // TypedError.Matches, as shown below.
 //    func example() {
 //        var filename = "nosuchfile.txt"
 //        data, e := readFile(filename)
 //        switch {
-//        case IllegalArgumentError.Instance(e):
+//        case IllegalArgumentError.Matches(e):
 //           log.Fatalf(e)
-//        case IOError.Instance(e):
+//        case IOError.Matches(e):
 //           log.Fatalf(e)
 //        }
 //        ...
 //    }
-func (fn TypedError) Instance(e error) bool {
+func (fn TypedError) Matches(e error) bool {
 	errcode := fn.Code()
 	codelen := len(errcode)
 	e0 := e.Error()

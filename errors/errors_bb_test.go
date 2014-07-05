@@ -44,12 +44,12 @@ func TestTypedError_Code(t *testing.T) {
 	}
 }
 
-// quick check that TypedError#Instance
+// quick check that TypedError#Matches
 func TestTypedError_Intance(t *testing.T) {
 	testCodeFn := func(code, extra string) bool {
 		te := errors.New(code)
 		e := te(extra)
-		return te.Instance(e)
+		return te.Matches(e)
 	}
 	fail := quick.Check(testCodeFn, quickConf)
 	if fail != nil {
