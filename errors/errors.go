@@ -98,11 +98,17 @@ func New(errcode string) TypedError {
 	return func(args ...interface{}) error {
 		decoration := ""
 		if len(args) > 0 {
-			decoration = ":"
+			decoration = ": "
 		}
-		errfmt := []interface{}{fmt.Sprintf("%s%s%s", prefix, errcode, decoration)}
-		args0 := append(errfmt, args...)
-		return fmt.Errorf("%s", fmt.Sprint(args0...))
+
+		msg := []byte(prefix + errcode + decoration)
+		for _, arg := range args {
+			msg = append(msg, []byte(fmt.Sprintf("%v", arg))...)
+			msg = append(msg, []byte(" ")...)
+		}
+
+		e := estr(string(msg))
+		return &e
 	}
 }
 
@@ -158,4 +164,12 @@ func (fn TypedError) Matches(e error) bool {
 // Returns the error code of this TypeError.
 func (fn TypedError) Code() string {
 	return fn().Error()[prefixlen:]
+}
+
+// internal
+type estr string
+
+// internal
+func (e *estr) Error() string {
+	return string(*e)
 }
