@@ -267,9 +267,6 @@ var DEBUG = false
 //
 //    }
 //
-// TODO: figure out why this is not working
-//
-// TODO: allow for spec'ing of addtional informational items
 func ForFunc(fname string) Panics {
 	return &fnpanics{fname}
 }
@@ -297,11 +294,12 @@ func (t *fnpanics) Recover(err *error) error {
 }
 
 func (t *fnpanics) infoFixup(info ...interface{}) []interface{} {
-	infofn := []interface{}{t.fname + ":"}
+	infofn := []interface{}{t.fname + "():"}
 	return append(infofn, info...)
 }
 func (t *fnpanics) OnError(e error, info ...interface{}) {
 	infofn := t.infoFixup(info...)
+	log.Println(infofn)
 	OnError(e, infofn...)
 }
 func (t *fnpanics) OnNil(v interface{}, info ...interface{}) {
