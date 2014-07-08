@@ -30,7 +30,9 @@ package errors
 //        return nil
 //    }
 var (
-	USAGE             TypedError = New("usage error")
+	ERROR             TypedError = New("error") // generic error
+	USAGE                        = New("usage error")
+	REQUIRED_FLAG                = New("required flag error")
 	ILLEGAL_STATE                = New("illegal state error")
 	ILLEGAL_ARGUEMENT            = New("illegal argument error")
 )
