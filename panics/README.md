@@ -1,5 +1,5 @@
-####`errors`
-This package provides psuedo-exception semantics  for Go.
+####`panics`
+This package provides psuedo-exception semantics for Go.
 
 ####`stat`
     star date         july 07 2014
