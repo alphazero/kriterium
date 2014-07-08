@@ -1,7 +1,7 @@
-###`escargo`
+![image](./kriterium.png)
 
-Elasticsearch Utility Lib for Go.
-
-* [`escargo/errors`](./errors) for definition and matching of typed errors.
-* [`escargo/panics`](./panics) for psuedo-exceptions.
-
+   
+    Was ist ES?    Kriterium is a library to support writing robust and verifiable Go code.
+    
+    
+    
