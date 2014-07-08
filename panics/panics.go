@@ -37,25 +37,31 @@ type stringCodec interface {
 }
 
 // -----------------------------------------------------------------------
-// Error with cause
+// recoveredError with cause
 // -----------------------------------------------------------------------
 
-// Error type with option cause.
-type Error struct {
-	Cause error
+// recoveredError type with option cause.
+// REVU: exporting this type and its member does not seem to be necessary.
+type recoveredError struct {
+	cause error
 	err   error
 }
 
-func (e Error) Error() string {
+func (e recoveredError) Error() string {
 	return e.err.Error()
 }
 
+// Errors are returned by the panics package as plain 'error' references.
+// This function is used to obtain of the underlying cause of such errors.
+//
+// If the argument is not a panics.recoveredError reference, then it simply returns
+// the input argument.
 func Cause(e error) error {
-	ex, ok := e.(*Error)
+	ex, ok := e.(*recoveredError)
 	if !ok {
 		return e
 	}
-	return ex.Cause
+	return ex.cause
 }
 
 // -----------------------------------------------------------------------
@@ -63,36 +69,36 @@ func Cause(e error) error {
 // -----------------------------------------------------------------------
 
 // Asserts that input arg 'flag' is true.
-// If false, panics with an Error with descriptive cause based on the
+// If false, panics with an recoveredError with descriptive cause based on the
 // 'info' n-aray input arg.
 func OnFalse(flag bool, info ...interface{}) {
 	if flag {
 		return
 	}
 	err := fmt.Errorf("%s - assert-fail:", fmtInfo(info...))
-	panic(&Error{Cause: err, err: err}) // REVU: this dup use of 'err' is wrong
+	panic(&recoveredError{cause: err, err: err}) // REVU: this dup use of 'err' is wrong
 }
 
 // Asserts that input arg 'flag' is false.
-// If true, panics with an Error with descriptive cause based on the
+// If true, panics with an recoveredError with descriptive cause based on the
 // 'info' n-aray input arg.
 func OnTrue(flag bool, info ...interface{}) {
 	if !flag {
 		return
 	}
 	err := fmt.Errorf("%s - assert-fail:", fmtInfo(info...))
-	panic(&Error{Cause: err, err: err}) // REVU: this dup use of 'err' is wrong
+	panic(&recoveredError{cause: err, err: err}) // REVU: this dup use of 'err' is wrong
 }
 
 // Asserts that input arg 'v' is not nil.
-// If nil, panics with an Error with descriptive cause based on the
+// If nil, panics with an recoveredError with descriptive cause based on the
 // 'info' n-aray input arg.
 func OnNil(v interface{}, info ...interface{}) {
 	if v != nil {
 		return
 	}
 	err := fmt.Errorf("%s - value is nil:", fmtInfo(info...))
-	panic(&Error{Cause: err, err: err}) // REVU: this dup use of 'err' is wrong
+	panic(&recoveredError{cause: err, err: err}) // REVU: this dup use of 'err' is wrong
 }
 
 // Asserts that (error) input arg 'e' is nil.
@@ -109,7 +115,7 @@ func OnError(e error, info ...interface{}) {
 	} else if !strings.HasPrefix(e.Error(), "error:") {
 		err = fmt.Errorf("error: %s%s", fmtInfo(info...), e)
 	}
-	panic(&Error{Cause: e, err: err}) // REVU: this is correct use of error w/ cause
+	panic(&recoveredError{cause: e, err: err}) // REVU: this is correct use of error w/ cause
 }
 
 func fmtInfo(info ...interface{}) string {
@@ -155,7 +161,7 @@ func Recover(err *error) error {
 	}
 
 	switch t := p.(type) {
-	case *Error:
+	case *recoveredError:
 		*err = t
 	case error:
 		*err = t
@@ -195,7 +201,7 @@ func AsyncRecover(stat chan<- interface{}, okstat interface{}) {
 	}
 
 	switch t := p.(type) {
-	case *Error:
+	case *recoveredError:
 		stat <- t
 	case error:
 		stat <- t
@@ -225,7 +231,7 @@ func ExitHandler(label string) {
 
 	var e error
 	switch t := p.(type) {
-	case *Error:
+	case *recoveredError:
 		e = t
 	case error:
 		e = t
