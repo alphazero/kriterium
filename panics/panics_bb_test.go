@@ -18,7 +18,7 @@
 package panics_test
 
 import (
-	"escargo/panics"
+	"kriterium/panics"
 	"testing"
 	//	"testing/quick"
 	"fmt"

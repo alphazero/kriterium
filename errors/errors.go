@@ -61,7 +61,7 @@ type TypedError func(args ...interface{}) error
 //
 // Usage examples:
 //
-//    import "escargo/errors"
+//    import "kriterium/errors"
 //    ...
 //
 //    var ErrWot   = errors.New("Something went wrong")
@@ -117,7 +117,7 @@ func New(errcode string) TypedError {
 //
 // Usage example:
 //
-//    import "escargo/errors"
+//    import "kriterium/errors"
 //    ...
 //
 //    var IllegalArgumentError = errors.New("IllegalArgument")

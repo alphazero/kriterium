@@ -9,5 +9,5 @@ This package provides psuedo-exception semantics for Go.
     documentation     tod0  inlined godoc
 
 ####`documentation`
-See [package go docs](https://godoc.org/github.com/elasticsearch/escargo/panics) for detailed usage examples.
+See [package go docs](https://godoc.org/github.com/elasticsearch/kriterium/panics) for detailed usage examples.
 

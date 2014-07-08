@@ -18,7 +18,7 @@
 package errors_test
 
 import (
-	"escargo/errors"
+	"kriterium/errors"
 	"testing"
 	"testing/quick"
 )
