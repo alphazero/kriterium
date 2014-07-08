@@ -27,16 +27,6 @@ import (
 )
 
 // -----------------------------------------------------------------------
-// internal support
-// -----------------------------------------------------------------------
-
-// stringCodec allows for detecting types that provide a String() method
-// internal use only.
-type stringCodec interface {
-	String() string
-}
-
-// -----------------------------------------------------------------------
 // recoveredError with cause
 // -----------------------------------------------------------------------
 
@@ -118,47 +108,16 @@ func OnError(e error, info ...interface{}) {
 	panic(&recoveredError{cause: e, err: err}) // REVU: this is correct use of error w/ cause
 }
 
-func fmtInfo(info ...interface{}) string {
-	var msg = ""
-	if len(info) > 0 {
-		for _, s := range info {
-			str := ""
-			switch t := s.(type) {
-			case string:
-				str = t
-			case stringCodec:
-				str = t.String()
-			case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
-				str = fmt.Sprintf("%d", t)
-			case time.Time:
-				str = fmt.Sprintf("'%d epoch-ns'", t.UnixNano())
-			case bool:
-				str = fmt.Sprintf("%t", t)
-			default:
-				str = fmt.Sprintf("%v", t)
-			}
-			str = " " + str
-			msg += str
-		}
-		msg = strings.Trim(msg, " ")
-	}
-	return msg
-}
-
 // Recover encapsulates a generalized method of handing
 // recovered panics, per std. panic/recover mechanism.
 //
-// Invocation of Recover() /must/ be deferred, per semantics of
-// Go recover().
-//
+// Invocation of Recover() /must/ be deferred,
+// per semantics of Go recover().
 func Recover(err *error) error {
-	if DEBUG {
-		return nil
-	}
+	if DEBUG { return nil }
+
 	p := recover()
-	if p == nil {
-		return nil
-	}
+	if p == nil { return nil }
 
 	switch t := p.(type) {
 	case *recoveredError:
@@ -191,9 +150,8 @@ func Recover(err *error) error {
 //
 // TODO: no rush but refactor this ..
 func AsyncRecover(stat chan<- interface{}, okstat interface{}) {
-	if DEBUG {
-		return
-	}
+	if DEBUG { return }
+
 	p := recover()
 	if p == nil {
 		stat <- okstat
@@ -221,9 +179,8 @@ func AsyncRecover(stat chan<- interface{}, okstat interface{}) {
 // Input arg 'label' is purely informational and used in creation
 // of the exit error.
 func ExitHandler(label string) {
-	if DEBUG {
-		return
-	}
+	if DEBUG { return }
+
 	p := recover()
 	if p == nil {
 		os.Exit(0)
@@ -238,14 +195,14 @@ func ExitHandler(label string) {
 	case string:
 		e = fmt.Errorf(t)
 	default:
-		e = fmt.Errorf("recovered-panic: %q", t)
+		e = fmt.Errorf("recovered: %q", t)
 	}
 	log.Fatalf("fatal error: %s: %s", label, e)
 }
 
-// set to true to short circuit the panic recovery mechanism
-// and get the full stack dump per canonical panic().
-var DEBUG = false
+// -----------------------------------------------------------------------
+// panics.ForFunc
+// -----------------------------------------------------------------------
 
 // ForFunc is a convenience feature that helps reduce code noise
 // in functions that use panics API.
@@ -295,8 +252,22 @@ type fnpanics struct {
 }
 
 func (t *fnpanics) Recover(err *error) error {
-	e := Recover(err)
-	return e
+	if DEBUG { return nil }
+
+	p := recover()
+	if p == nil { return nil }
+
+	switch t := p.(type) {
+	case *recoveredError:
+		*err = t
+	case error:
+		*err = t
+	case string:
+		*err = fmt.Errorf(t)
+	default:
+		*err = fmt.Errorf("recovered-panic: %q", t)
+	}
+	return *err
 }
 
 func (t *fnpanics) infoFixup(info ...interface{}) []interface{} {
@@ -305,7 +276,6 @@ func (t *fnpanics) infoFixup(info ...interface{}) []interface{} {
 }
 func (t *fnpanics) OnError(e error, info ...interface{}) {
 	infofn := t.infoFixup(info...)
-	log.Println(infofn)
 	OnError(e, infofn...)
 }
 func (t *fnpanics) OnNil(v interface{}, info ...interface{}) {
@@ -319,4 +289,45 @@ func (t *fnpanics) OnFalse(flag bool, info ...interface{}) {
 func (t *fnpanics) OnTrue(flag bool, info ...interface{}) {
 	infofn := t.infoFixup(info...)
 	OnTrue(flag, infofn...)
+}
+
+// -----------------------------------------------------------------------
+// internal support
+// -----------------------------------------------------------------------
+
+// stringCodec allows for detecting types that provide a String() method
+// internal use only.
+type stringCodec interface {
+	String() string
+}
+
+// set to true to short circuit the panic recovery mechanism
+// and get the full stack dump per canonical panic().
+var DEBUG = false
+
+func fmtInfo(info ...interface{}) string {
+	var msg = ""
+	if len(info) > 0 {
+		for _, s := range info {
+			str := ""
+			switch t := s.(type) {
+			case string:
+				str = t
+			case stringCodec:
+				str = t.String()
+			case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
+				str = fmt.Sprintf("%d", t)
+			case time.Time:
+				str = fmt.Sprintf("'%d epoch-ns'", t.UnixNano())
+			case bool:
+				str = fmt.Sprintf("%t", t)
+			default:
+				str = fmt.Sprintf("%v", t)
+			}
+			str = " " + str
+			msg += str
+		}
+		msg = strings.Trim(msg, " ")
+	}
+	return msg
 }
