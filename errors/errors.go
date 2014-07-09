@@ -152,6 +152,9 @@ func New(errcode string) TypedError {
 //        ...
 //    }
 func (fn TypedError) Matches(e error) bool {
+	if e == nil {
+		return false
+	}
 	errcode := fn.Code()
 	codelen := len(errcode)
 	e0 := e.Error()
