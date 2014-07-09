@@ -30,9 +30,12 @@ package errors
 //        return nil
 //    }
 var (
-	ERROR             TypedError = New("error") // generic error
-	USAGE                        = New("usage error")
-	REQUIRED_FLAG                = New("required flag error")
-	ILLEGAL_STATE                = New("illegal state error")
-	ILLEGAL_ARGUEMENT            = New("illegal argument error")
+	Error             TypedError = New("error") // generic error
+	Assertion                    = New("assertion error")
+	Usage                        = New("usage error")
+	RequiredFlag                 = New("required flag error")
+	IllegalState                 = New("illegal state error")
+	IllegalArgument              = New("illegal argument error")
+	ConcurrentAccess             = New("concurrent accession error")
+	ConcurrentOperation          = New("concurrent operation error")
 )

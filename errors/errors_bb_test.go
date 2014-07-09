@@ -18,7 +18,7 @@
 package errors_test
 
 import (
-	"kriterium/errors"
+	"github.com/elasticsearch/kriterium/errors"
 	"testing"
 	"testing/quick"
 )
