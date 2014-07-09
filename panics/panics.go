@@ -114,10 +114,14 @@ func OnError(e error, info ...interface{}) {
 // Invocation of Recover() /must/ be deferred,
 // per semantics of Go recover().
 func Recover(err *error) error {
-	if DEBUG { return nil }
+	if DEBUG {
+		return nil
+	}
 
 	p := recover()
-	if p == nil { return nil }
+	if p == nil {
+		return nil
+	}
 
 	switch t := p.(type) {
 	case *recoveredError:
@@ -150,7 +154,9 @@ func Recover(err *error) error {
 //
 // TODO: no rush but refactor this ..
 func AsyncRecover(stat chan<- interface{}, okstat interface{}) {
-	if DEBUG { return }
+	if DEBUG {
+		return
+	}
 
 	p := recover()
 	if p == nil {
@@ -179,7 +185,9 @@ func AsyncRecover(stat chan<- interface{}, okstat interface{}) {
 // Input arg 'label' is purely informational and used in creation
 // of the exit error.
 func ExitHandler(label string) {
-	if DEBUG { return }
+	if DEBUG {
+		return
+	}
 
 	p := recover()
 	if p == nil {
@@ -252,10 +260,14 @@ type fnpanics struct {
 }
 
 func (t *fnpanics) Recover(err *error) error {
-	if DEBUG { return nil }
+	if DEBUG {
+		return nil
+	}
 
 	p := recover()
-	if p == nil { return nil }
+	if p == nil {
+		return nil
+	}
 
 	switch t := p.(type) {
 	case *recoveredError:

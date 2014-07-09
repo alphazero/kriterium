@@ -20,6 +20,6 @@ package kriterium
 
 // nop include of all nested packages to simplify build process
 import (
-	_ "kriterium/panics"
 	_ "kriterium/errors"
+	_ "kriterium/panics"
 )
