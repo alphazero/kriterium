@@ -2,7 +2,7 @@
 
    
 ####`stat`
-    star date         july 08 2014
+    star date         july 10 2014
 
     specification     todo    
     library           wip 
@@ -12,6 +12,7 @@
 
 * [`kriterium/errors`](./errors) for definition and matching of typed errors.
 * [`krtierium/panics`](./panics) for psuedo-exceptions and error handling.
+* [`krtierium/flags`](./flags) convenience command line option definition and use.
 
     
     

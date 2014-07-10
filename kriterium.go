@@ -20,6 +20,7 @@ package kriterium
 
 // nop include of all nested packages to simplify build process
 import (
-	_ "kriterium/errors"
-	_ "kriterium/panics"
+	_ "github.com/elasticsearch/kriterium/errors"
+	_ "github.com/elasticsearch/kriterium/flags"
+	_ "github.com/elasticsearch/kriterium/panics"
 )

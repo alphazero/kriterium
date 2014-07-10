@@ -24,7 +24,7 @@ package errors
 //    ...
 //    func woof(arg interface{}) error {
 //        if arg == nil {
-//            return errors.ILLEGAL_ARGUMENT("arg", "nil value")
+//            return errors.IllegalArgument("arg", "nil value")
 //        }
 //        ...
 //        return nil
@@ -36,6 +36,8 @@ var (
 	RequiredFlag                   = New("required flag error")
 	IllegalState                   = New("illegal state error")
 	IllegalArgument                = New("illegal argument error")
+	NotSupported                   = New("not supported error")
 	ConcurrentAccess               = New("concurrent accession error")
 	ConcurrentOperation            = New("concurrent operation error")
+	TemplateExecute                = New("template execute error")
 )
