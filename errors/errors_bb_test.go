@@ -45,7 +45,7 @@ func TestTypedError_Code(t *testing.T) {
 }
 
 // quick check that TypedError#Matches
-func TestTypedError_Intance(t *testing.T) {
+func TestTypedError_Matches(t *testing.T) {
 	testCodeFn := func(code, extra string) bool {
 		te := errors.New(code)
 		e := te(extra)
@@ -54,5 +54,18 @@ func TestTypedError_Intance(t *testing.T) {
 	fail := quick.Check(testCodeFn, quickConf)
 	if fail != nil {
 		t.Error(fail)
+	}
+}
+
+// regression test: https://github.com/elasticsearch/kriterium/issues/1
+// check that given nil input arg
+// 1 - TypedError#Matches never panics
+// 2 - returns true
+func TestTypedError_MatchesNilArg(t *testing.T) {
+	et := errors.New("any")
+	expected := false
+	have := et.Matches(nil)
+	if have != expected {
+		t.Fatalf("TypedError.Matches(nil) - expected:%t have:%t\n", expected, have)
 	}
 }
